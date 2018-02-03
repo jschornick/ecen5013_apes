@@ -8,7 +8,7 @@
 
 SCRIPT_DIR=$(dirname $0)
 
-KERNEL_VERSION=v4.15-rc9
+KERNEL_VERSION=v4.15
 LINUX_DIR=${HOME}/linux-stable
 THREADS=8
 
@@ -40,7 +40,5 @@ echo Installing kernel on VM...
 rsync ${SCRIPT_DIR}/${INSTALL_SCRIPT} ${VM_NAME}:/tmp/
 echo
 
-ssh ${VM_NAME} ls -l 
 ssh ${VM_NAME} /tmp/${INSTALL_SCRIPT}
-ssh ${VM_NAME} ls -l /boot/
 

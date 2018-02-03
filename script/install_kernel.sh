@@ -7,3 +7,7 @@ mount -t vboxsf linux-stable /mnt/
 make -C /mnt/ modules_install
 make -C /mnt/ install
 
+ls -l /boot/
+
+reboot
+
