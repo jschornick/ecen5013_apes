@@ -1,0 +1,4 @@
+*.elf
+BUILD
+testfile_*
+*.out
