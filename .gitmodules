@@ -1,3 +1,4 @@
 [submodule "3rd-party/cmocka"]
-	path = 3rd-party/cmocka
-	url = https://git.cryptomilk.org/projects/cmocka.git
+    path = 3rd-party/cmocka
+    url = https://git.cryptomilk.org/projects/cmocka.git
+    ignore = dirty
