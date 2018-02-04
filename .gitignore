@@ -2,3 +2,13 @@
 BUILD
 testfile_*
 *.out
+
+# kernel module artifacts
+*.cmd
+.cache.mk
+.tmp_versions
+*.ko
+*.o
+apes.mod.c
+Module.symvers
+modules.order
