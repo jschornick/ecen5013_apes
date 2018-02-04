@@ -1,0 +1,6 @@
+[Unit]
+Description=Saves the output of hw2_p4 into /tmp/hw2_p4.out file
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/root/hw2_p4.elf >> /tmp/hw2_p4.out'

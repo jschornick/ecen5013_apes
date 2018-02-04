@@ -1,0 +1,6 @@
+[Unit]
+Description=Run hw2_p4 service every 10 minutes
+
+[Timer]
+OnCalendar=*:0/10
+AccuracySec=1ms
