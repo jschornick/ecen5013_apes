@@ -10,28 +10,35 @@ MODULE_AUTHOR("Jeff Schornick");
 MODULE_DESCRIPTION("APES HW2 Problem 5");
 MODULE_VERSION("0.01");
 
+#define DEFAULT_TIMER_PERIOD_MS 500
+#define TIMER_FLAGS 0
+
+static char *name;
+module_param(name, charp, S_IRUGO | S_IWUSR);
+
+static uint timer_period_ms = DEFAULT_TIMER_PERIOD_MS;
+module_param(timer_period_ms, uint, S_IRUGO | S_IWUSR);
+
 static struct timer_list apes_timer;
 
-#define APES_TIMER_FLAGS 0
-#define TIMER_PERIOD_MS  500
 
 void apes_timer_callback( struct timer_list *timer )
 {
-    static uint32_t calls = 0;
-    printk( "Timer expired @ %ld (count = %u)\n", jiffies, calls );
-    mod_timer( &apes_timer, jiffies + msecs_to_jiffies(TIMER_PERIOD_MS) );
+    static uint32_t count = 0;
+    printk( "Timer expired @ %ld (name = %s, count = %u)\n", jiffies, name, ++count );
+    if( mod_timer(&apes_timer, jiffies + msecs_to_jiffies(timer_period_ms)) ) {
+        printk(KERN_ERR "Could not modify timer!\n");
+    }
 }
 
 static int __init apes_init(void)
 {
-    int retval;
-
     printk(KERN_INFO "Module init!\n");
 
-    timer_setup(&apes_timer, apes_timer_callback, APES_TIMER_FLAGS);
+    timer_setup(&apes_timer, apes_timer_callback, TIMER_FLAGS);
 
-    retval = mod_timer( &apes_timer, jiffies + msecs_to_jiffies(TIMER_PERIOD_MS) );
-    if( retval ) {
+    printk(KERN_INFO "Setting up timer with period of %u ms\n", timer_period_ms);
+    if( mod_timer(&apes_timer, jiffies + msecs_to_jiffies(timer_period_ms)) ) {
         printk(KERN_ERR "Could not modify timer!\n");
     }
 
