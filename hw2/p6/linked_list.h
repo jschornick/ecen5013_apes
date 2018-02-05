@@ -7,6 +7,8 @@
   Author      : Jeff Schornick (jesc5667@colorado.edu)
   Version     : Version and history information is available at the GitHub repository:
                 https://github.com/jschornick/ecen5013_apes/hw2
+
+  Testing     : CMocka unit tests can be run via "make tests"
 */
 
 #ifndef _LINKED_LIST_H
@@ -33,6 +35,13 @@ typedef struct node {
  */
 #define LIST_CONTAINER(addr, type, member) ( (type *) ( ((void *) addr) - offsetof(type,member) ) )
 
+/**
+ * Macro       : DESTROY
+ * Description : Destroys a list and frees each allocated element
+ * Params      : @p_head pointer to the head of the list
+ *               @type   type name of the containing structure
+ *               @member name of the linked list member within the container (e.g., node)
+ */
 #define DESTROY( p_head, type, member ) (                   \
         {                                                   \
             node_t *p_next;                                 \
@@ -78,7 +87,7 @@ node_t * insert_at_end( node_t *p_head, node_t *p_new );
  * Params      :​ @p_base pointer to the base node
  *               @p_new  data to add
  *               @offset offset describing where to add the data
- * Returns     :​ Pointer to the head of the linked list
+ * Returns     :​ Pointer to the head of the linked list, or NULL if bad offset
  */
 node_t * insert_at_position( node_t *p_base, node_t *p_new, int32_t offset );
 

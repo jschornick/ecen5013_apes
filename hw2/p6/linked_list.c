@@ -3,10 +3,13 @@
   Description : APES Homework 2, Problem 6.
 
   Doubly-linked list data structure library implementation.
+  See header file for descriptions of all public functions.
 
   Author      : Jeff Schornick (jesc5667@colorado.edu)
   Version     : Version and history information is available at the GitHub repository:
                 https://github.com/jschornick/ecen5013_apes/hw2
+
+  Testing     : CMocka unit tests can be run via "make tests"
 */
 
 #include <stdlib.h>  // malloc
@@ -22,7 +25,8 @@ node_t * insert_at_beginning( node_t *p_head, node_t *p_new )
     p_new->prev = NULL;
 
     // Since we've been passed in the head, mark it as the next node
-    // in the chain
+    // in the chain.
+    // if head was NULL, p_new is still properly terminated
     p_new->next = p_head;
 
     // back link the previous head to the new node if non-null
@@ -51,7 +55,8 @@ node_t * insert_at_end( node_t *p_head, node_t *p_new )
         p_new->prev->next = p_new;
     }
 
-    return p_head;
+    // find new head since original may have been null
+    return get_head(p_new);
 }
 
 node_t * insert_at_position( node_t *p_base, node_t *p_new, int32_t offset )
@@ -59,17 +64,27 @@ node_t * insert_at_position( node_t *p_base, node_t *p_new, int32_t offset )
 
     node_t *p_node;
 
+    // if null, creata new list
+    if( !p_base ) {
+        p_new->next = NULL;
+        p_new->prev = NULL;
+        return p_new;
+    }
+
     p_node = get_offset( p_base, offset );
 
-    if( p_node ) {
-        p_new->next = p_node;
-        p_new->prev = p_node->prev;
-
-        if (p_new->prev) {
-            p_new->prev->next = p_new;
-        }
-        p_node->prev = p_new;
+    // bad offset, just return
+    if( !p_node ) {
+        return get_head(p_base);
     }
+
+    p_new->next = p_node;
+    p_new->prev = p_node->prev;
+
+    if (p_new->prev) {
+        p_new->prev->next = p_new;
+    }
+    p_node->prev = p_new;
 
 
     return get_head(p_new);
@@ -100,8 +115,13 @@ node_t * delete_from_end( node_t *p_head )
         if( p_tail->prev )
         {
             p_tail->prev->next = NULL;
+            p_head = get_head(p_tail);
         }
-        p_head = get_head(p_tail);
+        // otherwise we were the last node
+        else
+        {
+            p_head = NULL;
+        }
     }
     return p_head;
 }
@@ -113,17 +133,24 @@ node_t * delete_from_position( node_t *p_base, int32_t offset )
 
     p_node = get_offset( p_base, offset );
 
-    if( p_node )
-    {
-        if( p_node->prev ) {
-            p_node->prev->next = p_node->next;
-        }
-        if( p_node->next ) {
-            p_node->next->prev = p_node->prev;
-        }
+    // bad offset, just return
+    if( !p_node ) {
+        return get_head(p_base);
     }
 
-    return get_head(p_node);
+    /* note_t *p_prev_old = p_node->prev; */
+    /* note_t *p_next_old = p_node->next; */
+
+    if( p_node->prev ) {
+        p_node->prev->next = p_node->next;
+        p_base = p_node->prev;
+    }
+    if( p_node->next ) {
+        p_node->next->prev = p_node->prev;
+        p_base = p_node->next;
+    }
+
+    return get_head(p_base);
 
 }
 

@@ -1,11 +1,12 @@
 # File        : hw2/makefile
 # Description : Makefile for APES Homework 2, Problem 6
+# Author      : Jeff Schornick (jesc5667@colorado.edu)
+# Version     : Version and history information is available at the GitHub repository:
+#               https://github.com/jschornick/ecen5013_apes/hw2
 
 MAKEFLAGS += --no-builtin-rules
 
 CC         = gcc
-
-#INCLUDES   = -I$(INC_DIR)
 
 CPP_FLAGS  = $(INCLUDES)
 
@@ -25,7 +26,7 @@ BUILD_DIR = BUILD
 .PRECIOUS: $(BUILD_DIR)/%.i $(BUILD_DIR)/%.o
 
 .PHONY: all
-all: test
+all: tests
 
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
@@ -36,15 +37,10 @@ $(BUILD_DIR)/%.i: $(SRC_DIR)/%.c $(BUILD_DIR)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(BUILD_DIR)
 	$(CC) $(C_FLAGS) -c $< -o $@
 
-$(NAME).elf: $(BUILD_DIR)/%.o $(BUILD_DIR)/%linked_list.o $(BUILD_DIR)
-	$(CC) $< $(LD_FLAGS) -o $@
-
-test.elf: $(BUILD_DIR)/linked_list.o $(BUILD_DIR)/test.o
-	$(CC) $^ $(LD_FLAGS) -o $@
-
-.PHONY: test
-test: test.elf
-	./test.elf
+.PHONY: tests
+tests: $(BUILD_DIR)/linked_list.o
+	@echo Building and running unit tests...
+	cd tests && make
 
 .PHONY: clean
 clean:

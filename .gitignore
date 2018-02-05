@@ -12,3 +12,4 @@ testfile_*
 apes.mod.c
 Module.symvers
 modules.order
+test_*.run
