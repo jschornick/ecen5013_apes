@@ -52,7 +52,7 @@ syscall:
 
 .PHONY: ktest
 ktest: syscall $(BINARY)
-	-build_kernel.sh
+	-build_kernel.sh hw2_p3
 	sleep 5
 	rsync -va $(BINARY) apes:
 

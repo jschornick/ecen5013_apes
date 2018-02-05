@@ -8,7 +8,7 @@
 
 SCRIPT_DIR=$(dirname $0)
 
-KERNEL_VERSION=v4.15
+KERNEL_VERSION=${1:-v4.15}
 LINUX_DIR=${HOME}/linux-stable
 THREADS=8
 

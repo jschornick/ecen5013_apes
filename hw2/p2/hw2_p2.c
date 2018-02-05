@@ -27,6 +27,7 @@ int main( int argc, char **argv )
 
     FILE *p_file = NULL;
 
+    // If not compiled to read form standad input, require command-line argument
     #ifndef READ_STDIN
     if( argc < 2 )
     {
@@ -36,12 +37,14 @@ int main( int argc, char **argv )
     #endif
 
     // Part 0 : Print a string
-    // *******************************
+    // *************************
 
     printf("This is an interesting string. Marvel at its fascinating characters.\n");
 
 
     // Part 1 : Create a file and change its mode
+    // *********************************************
+
     p_file = fopen( FILENAME, "w+" );
     if( !p_file )
     {
@@ -50,11 +53,12 @@ int main( int argc, char **argv )
     }
     fclose( p_file );
 
+    // Change permissions to be read/write for user
     chmod( FILENAME, S_IRUSR | S_IWUSR );
 
 
-    // Part 2 : Write to file
-    // ************************
+    // Part 2 : Write character to file
+    // **********************************
 
     p_file = fopen( FILENAME, "w+" );  // open for writing, overwrite
     if( !p_file )
@@ -67,8 +71,8 @@ int main( int argc, char **argv )
     fclose( p_file );
 
 
-    // Part 2 : Read an input string, write, and flush
-    // *************************************************
+    // Part 3 : Read an input string, append, and flush
+    // **************************************************
 
     p_file = fopen( FILENAME, "a" );  // open for append
     if( !p_file )
@@ -85,7 +89,7 @@ int main( int argc, char **argv )
         return ERR_MEM;
     }
 
-
+    // Read either from stdin or command-line based on how compiled
     #ifdef READ_STDIN
     scanf( "%" STRINGIFY(MAX_CHARS) "s", p_buf); // scanf reads X character + null
     fprintf( p_file, "%s", p_buf );
@@ -98,8 +102,8 @@ int main( int argc, char **argv )
     fclose( p_file );
 
 
-    // Part 2: Read from file
-    // *******************************
+    // Part 4 : Read from file
+    // *************************
 
     p_file = fopen( FILENAME, "r" );  // open for reading
     if( !p_file )
@@ -107,7 +111,6 @@ int main( int argc, char **argv )
         printf( "Failed to open file for reading: %s\n", FILENAME );
         return ERR_FILE;
     }
-
 
     char my_char;
     my_char = fgetc( p_file );
@@ -122,8 +125,9 @@ int main( int argc, char **argv )
     }
 
     fclose( p_file );
-
     free( p_buf );
+
+    printf( "\n" );
 
     return 0;
 
