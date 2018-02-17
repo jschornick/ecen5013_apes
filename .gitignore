@@ -13,3 +13,5 @@ apes.mod.c
 Module.symvers
 modules.order
 test_*.run
+
+.gdb_history
