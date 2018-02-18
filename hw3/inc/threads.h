@@ -26,8 +26,8 @@ typedef struct thread_info {
 
 typedef enum thread_name {
     THREAD_MAIN = 0,
-    THREAD_1,
-    THREAD_2,
+    THREAD_LETTERS,
+    THREAD_METRICS,
     THREAD_MAX
 } thread_name_t;
 

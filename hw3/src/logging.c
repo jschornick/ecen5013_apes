@@ -11,6 +11,7 @@
 
 #include <pthread.h>
 #include <stdarg.h>  // variable args
+#include <time.h>
 
 #include "threads.h"
 #include "logging.h"
@@ -44,9 +45,13 @@ void log_with_tinfo( thread_info_t *tinfo, const char*format, ...)
 
 void log_varg( thread_info_t *tinfo, const char*format, va_list args)
 {
+    struct timespec t;
+    clock_gettime(CLOCK_MONOTONIC, &t );
+
     // We can't be 100% certain when the file stream will be flushed, so append to the stream and flush in one atomic action
     // this guantees that complete log lines are added to the log file
     pthread_mutex_lock(&log_mutex);
+    fprintf( tinfo->p_logfile, "%07ld.%09ld ", t.tv_sec, t.tv_nsec );
     fprintf( tinfo->p_logfile, "[%s] ", tinfo->name);
     vfprintf( tinfo->p_logfile, format, args );
     fflush( tinfo->p_logfile );

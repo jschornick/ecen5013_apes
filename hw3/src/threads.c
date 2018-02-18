@@ -10,15 +10,16 @@
 */
 
 #include <pthread.h>
-#include <unistd.h>
+#include <unistd.h>   // for gettid
 #include <sys/syscall.h>
+#include <time.h>
 
 #include "logging.h"
 #include "threads.h"
 
 pthread_key_t tinfo_key;
 thread_info_t thread_info[THREAD_MAX];
-const char *thread_name[] = { "Main", "T1", "T2" };
+const char *thread_name[] = { "Main", "Letters", "Metrics" };
 
 // finishes tinfo population and opens log
 void thread_init( thread_info_t *tinfo)

@@ -17,7 +17,8 @@ C_FLAGS   += -Wall -Werror
 C_FLAGS   += -O0
 C_FLAGS   += -g3 -gstrict-dwarf
 
-LD_FLAGS   = -pthread
+# rt for posix timers
+LD_FLAGS   = -pthread -lrt
 
 SRC_DIR = src
 INC_DIR = inc
