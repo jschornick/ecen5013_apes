@@ -42,10 +42,10 @@ default: $(EXE)
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
 
-$(BUILD_DIR)/%.i: $(SRC_DIR)/%.c $(BUILD_DIR)
+$(BUILD_DIR)/%.i: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CPP_FLAGS) -E $< -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(BUILD_DIR)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(C_FLAGS) -c $< -o $@
 
 $(EXE): $(OBJS)

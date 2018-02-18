@@ -13,6 +13,7 @@
 #include <signal.h>  // sigevent for posix timer
 #include <time.h>
 #include <semaphore.h>
+#include <sys/resource.h>  // rusage
 
 #include "linked_list.h"
 #include "threads.h"
@@ -122,11 +123,18 @@ void *metrics_reporter( void *data )
         logit( "Timer set failed!\n" );
     }
 
+    struct rusage usage;
+
     sem_init(&metrics_sem, 0, 0);
 
     while(1) {
         sem_wait(&metrics_sem);
-        logit( "Counter: %u\n", counter );
+        getrusage( RUSAGE_SELF, &usage );
+        logit( "CPU stats: User %lu.%06lu, Kernel %lu.%06lu, CS(vol) %u, CS(inv) %u\n",
+               usage.ru_utime.tv_sec, usage.ru_utime.tv_usec,
+               usage.ru_stime.tv_sec, usage.ru_stime.tv_usec,
+               usage.ru_nvcsw, usage.ru_nivcsw);
+
     }
     return NULL;
 }
