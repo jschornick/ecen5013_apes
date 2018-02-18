@@ -26,7 +26,7 @@ BUILD_DIR = BUILD
 NAME   = hw3
 EXE    = $(NAME).elf
 
-C_SRCS = $(NAME).c linked_list.c
+C_SRCS = $(NAME).c linked_list.c logging.c threads.c
 OBJS = $(addprefix $(BUILD_DIR)/, $(C_SRCS:.c=.o))
 
 # Convenience targets
