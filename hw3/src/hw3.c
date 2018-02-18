@@ -9,6 +9,7 @@
                 https://github.com/jschornick/ecen5013_apes/hw3
 */
 
+#include <stdlib.h>
 #include <pthread.h>
 #include <signal.h>  // sigevent for posix timer
 #include <time.h>
@@ -22,6 +23,7 @@
 #include <unistd.h>   // sleep
 
 #define METRICS_INTERVAL_MS 100
+#define LETTERS_FILE "Valentinesday.txt"
 
 void *letter_counter( void *data );
 void *metrics_reporter( void *data );
@@ -84,8 +86,39 @@ void *letter_counter( void *data )
     thread_info_t *tinfo = data;
     thread_init( tinfo );
 
-    for( int i=0; i<100; i++ ) {
-        logit( "Thread 1 is the first thread\n" );
+    FILE *p_file = fopen( LETTERS_FILE, "r" );
+
+    if (p_file == NULL) {
+        logit( "Failed to open file: '%s'\n", LETTERS_FILE );
+        return NULL;
+    }
+    logit( "Successfully opened file: '%s'\n", LETTERS_FILE );
+
+    typedef struct count {
+        uint32_t count;
+        char letter;
+        node_t node;
+    } count_t;
+
+    node_t *p_head = NULL;
+    //node_t *p_node = NULL;
+    count_t *p_count;
+
+    for( char ch = 'Z'; ch >= 'A'; ch-- ) {
+        p_count = malloc( sizeof(count_t) );
+        p_count->letter = ch;
+        p_count->count = 0;
+        p_head = insert_at_beginning( p_head, &p_count->node );
+    }
+
+    unsigned char ch = 0;
+    while( (ch = fgetc(p_file)) != EOF ) {
+        ch &= ~0x20;  // convert ASCII to upppercase
+        if( (ch >= 'A') && (ch <= 'Z') ) {
+            p_count = LIST_CONTAINER(get_offset(p_head, ch - 'A'), count_t, node);
+            p_count->count++;
+            logit( "Got: %c, Total: %u\n", ch, p_count->count );
+        }
     }
     return NULL;
 }
@@ -132,6 +165,7 @@ void *metrics_reporter( void *data )
 
     sem_init(&metrics_sem, 0, 0);
 
+    logit( "Metrics reporter initialized\n" );
     while(1) {
         sem_wait(&metrics_sem);
         getrusage( RUSAGE_SELF, &usage );
