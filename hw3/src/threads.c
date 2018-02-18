@@ -41,11 +41,19 @@ void thread_init( thread_info_t *tinfo)
     logit( "Start time: %u.%09u\n", t.tv_sec, t.tv_nsec );
 }
 
+// NOTE: Can't use logit() in cleanup!
 void thread_cleanup(void *data)
 {
     thread_info_t *tinfo = data;
     struct timespec t;
     clock_gettime(CLOCK_MONOTONIC, &t );
+
+    if (tinfo->timer) {
+        log_with_tinfo( tinfo, "Deleting POSIX timer\n" );
+        timer_delete(tinfo->timer);
+    }
+
     // our thread local storage is no longer valid, but the allocation is still valid
-    log_with_tinfo(tinfo, "Exit time: %u.%09u\n", t.tv_sec, t.tv_nsec );
+    log_with_tinfo( tinfo, "Closing logfile (fd = %d), exit time: %ld.%09ld\n",
+           fileno(tinfo->p_logfile), t.tv_sec, t.tv_nsec );
 }

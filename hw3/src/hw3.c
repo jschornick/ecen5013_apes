@@ -25,6 +25,7 @@
 
 void *letter_counter( void *data );
 void *metrics_reporter( void *data );
+void signal_handler(int sig);
 
 int main( int argc, char *argv[] )
 {
@@ -51,6 +52,9 @@ int main( int argc, char *argv[] )
     // Even though this is the main thread, initiailze our info just like any other thread
     thread_init(tinfo);
 
+    signal( SIGUSR1, signal_handler );
+    signal( SIGUSR2, signal_handler );
+
     // *** main init done ***
 
     pthread_t letters_thread, metrics_thread;
@@ -68,8 +72,8 @@ int main( int argc, char *argv[] )
     pthread_join( letters_thread, NULL );
     pthread_join( metrics_thread, NULL );
 
-    // register with atexit?
-    pthread_exit(0);
+    logit( "All threads joined\n" );
+    thread_cleanup(tinfo);
 
     return 0;
 }
@@ -85,6 +89,7 @@ void *letter_counter( void *data )
     }
     return NULL;
 }
+
 
 uint32_t counter = 0;
 sem_t metrics_sem;
@@ -103,13 +108,13 @@ void *metrics_reporter( void *data )
     thread_init( tinfo );
 
     struct sigevent event;
-    event.sigev_notify = SIGEV_THREAD;
+    event.sigev_notify = SIGEV_THREAD;   // just call a function, don't signal
     event.sigev_notify_function = timer_func;
     event.sigev_value.sival_ptr = NULL;  // data value passed in when using SIGEV_THREAD?
     event.sigev_notify_attributes = NULL;
 
-    timer_t timer;
-    if (timer_create(CLOCK_MONOTONIC, &event, &timer) ) {
+    //timer_t timer;
+    if (timer_create(CLOCK_MONOTONIC, &event, &tinfo->timer) ) {
         logit( "Timer create failed\n" );
     }
 
@@ -119,7 +124,7 @@ void *metrics_reporter( void *data )
     ts.it_interval.tv_sec = 0;
     ts.it_interval.tv_nsec = ts.it_value.tv_nsec;  // set reload value, make timer periodic
 
-    if( timer_settime(timer, 0, &ts, NULL) ) {
+    if( timer_settime(tinfo->timer, 0, &ts, NULL) ) {
         logit( "Timer set failed!\n" );
     }
 
@@ -140,3 +145,18 @@ void *metrics_reporter( void *data )
 }
 
 
+void signal_handler(int sig)
+{
+    thread_info_t *tinfo = pthread_getspecific(tinfo_key);
+    if( tinfo->app_tid != THREAD_MAIN ) {
+        logit( "Caught signal %d, exiting gracefully...\n", sig );
+        // NOTE: Thread exit will cause thread_cleanup() to be called as a
+        // destructor when each thread's TLS is removed
+        pthread_exit(0);
+    } else {
+        logit( "Caught signal %d, cancelling child threads...\n", sig );
+        for(thread_name_t idx = 1; idx<THREAD_MAX; idx++) {
+            pthread_cancel(thread_info[idx].pthread_tid);
+        }
+    }
+}

@@ -20,6 +20,7 @@ typedef struct thread_info {
     pid_t linux_tid;
     uint8_t app_tid;
     const char *name;
+    timer_t timer;
     char *log_filename;  // const?
     FILE *p_logfile;
 } thread_info_t;
