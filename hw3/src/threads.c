@@ -57,11 +57,11 @@ void thread_init( thread_info_t *tinfo)
     pthread_setspecific(tinfo_key, tinfo );
 
     tinfo->p_logfile = fopen( tinfo->log_filename, "a" );
-    logit( "Opened logfile, fd = %d\n", fileno(tinfo->p_logfile));
+    logit( "Opened logfile (fd = %d), start time: %u.%09u\n",
+           fileno(tinfo->p_logfile), t.tv_sec, t.tv_nsec );
     logit( "App TID: %u, Linux TID: %d, pthread ID: %lu\n",
            tinfo->app_tid, tinfo->linux_tid, tinfo->pthread_tid );
 
-    logit( "Start time: %u.%09u\n", t.tv_sec, t.tv_nsec );
 }
 
 
