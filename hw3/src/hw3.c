@@ -2,67 +2,63 @@
   File        : hw3.c
   Description : APES Homework 3
 
-  Multithreaded...
+  Multithreaded program which concurrently analyzes a file reports CPU metrics.
+
+    Usage: ./hw3 [logfile]
+
+  If [logfile] is not provided, a default will be used.
+
+  The program responds to SIGUSR1 or SIGUSR2 for graceful shutdown of worker
+  threads. The main thread also accepts these signals and will ensure the
+  workers shutdown down before exiting completely.
+
+  NOTE: Graceful shutdown is handled by a hook in the TLS which can be used to
+  call a function when the TLS is removed prior to termination.
 
   Author      : Jeff Schornick (jesc5667@colorado.edu)
   Version     : Version and history information is available at the GitHub repository:
                 https://github.com/jschornick/ecen5013_apes/hw3
 */
 
-#include <stdlib.h>
 #include <pthread.h>
-#include <signal.h>  // sigevent for posix timer
-#include <time.h>
-#include <semaphore.h>
-#include <sys/resource.h>  // rusage
+#include <signal.h>
 
-#include "linked_list.h"
 #include "threads.h"
 #include "logging.h"
+#include "metrics.h"
+#include "letters.h"
 
-#include <unistd.h>   // sleep
 
-#define METRICS_INTERVAL_MS 100
-#define LETTER_FILE "Valentinesday.txt"
-#define LETTER_COUNT_TARGET 3
-
-void *letter_counter( void *data );
-void *metrics_reporter( void *data );
 void signal_handler(int sig);
 
+
+// Function: main
+//
+// This is the primary program entry point, responsible for creating all worker threads
+// and ensuring that their work is complete before exiting.
+//
 int main( int argc, char *argv[] )
 {
-
-    thread_info_t *tinfo;
-    tinfo = &thread_info[THREAD_MAIN];
-
-    pthread_key_create(&tinfo_key, thread_cleanup);
+    char * log_filename;
 
     // Get log file name from the command line or use a default
-    // We're populating the name in tinfo since the assignment requires that
-    // this common parameter be passed into each thread
     if ( argc < 2 ) {
-        tinfo->log_filename = default_logfile;
+        log_filename = default_logfile;
     } else {
-        tinfo->log_filename = argv[1];
+        log_filename = argv[1];
     }
 
-    for(thread_name_t name = 0; name<THREAD_MAX; name++) {
-        thread_info[name].app_tid = name;
-        thread_info[name].log_filename = thread_info[THREAD_MAIN].log_filename;
-    }
+    // Setup and initialize threading structures that will be used to manage worker threads.
+    thread_info_t *tinfo = init_threading( log_filename );
 
-    // Even though this is the main thread, initiailze our info just like any other thread
-    thread_init(tinfo);
-
+    // Using a simple call to signal() is fine for our requirements
+    // All threads will share this signal handler.
     signal( SIGUSR1, signal_handler );
     signal( SIGUSR2, signal_handler );
 
-    // *** main init done ***
-
     pthread_t letters_thread, metrics_thread;
 
-    // thread struct, thread attrs, func, arg
+    // Create worker threads
     if( pthread_create( &letters_thread, NULL, letter_counter, &thread_info[THREAD_LETTERS] ) ) {
         logit( "Failed to create letters thread!\n" );
     }
@@ -71,132 +67,37 @@ int main( int argc, char *argv[] )
         logit( "Failed to create metrics thread!\n" );
     }
 
-    // thread struct, void **retval
+    // Don't exit until all workers have exited
     pthread_join( letters_thread, NULL );
     pthread_join( metrics_thread, NULL );
 
-    logit( "All threads joined\n" );
+    logit( "All worker threads joined\n" );
+
+    // Also cleanup main thread before process exits completely
     thread_cleanup(tinfo);
 
     return 0;
 }
 
 
-void *letter_counter( void *data )
-{
-    thread_info_t *tinfo = data;
-    thread_init( tinfo );
-
-    FILE *p_file = fopen( LETTER_FILE, "r" );
-
-    if (p_file == NULL) {
-        logit( "Failed to open file: '%s'\n", LETTER_FILE );
-        return NULL;
-    }
-    logit( "Successfully opened file: '%s'\n", LETTER_FILE );
-
-    typedef struct count {
-        uint32_t count;
-        char letter;
-        node_t node;
-    } count_t;
-
-    node_t *p_head = NULL;
-    count_t *p_count;
-
-    for( char ch = 'Z'; ch >= 'A'; ch-- ) {
-        p_count = malloc( sizeof(count_t) );
-        p_count->letter = ch;
-        p_count->count = 0;
-        p_head = insert_at_beginning( p_head, &p_count->node );
-    }
-
-    int inchar = 0;  // fgetc returns int, and necessary to catch EOF
-    while( (inchar = fgetc(p_file)) != EOF ) {
-        inchar &= ~0x20;  // convert ASCII to upppercase
-        if( (inchar >= 'A') && (inchar <= 'Z') ) {
-            p_count = LIST_CONTAINER(get_offset(p_head, inchar - 'A'), count_t, node);
-            p_count->count++;
-        }
-    }
-    logit( "Letter counting complete\n" );
-    while( p_head != NULL) {
-        p_count = LIST_CONTAINER(p_head, count_t, node);
-        //logit( "Total for %c : %u\n", p_count->letter, p_count->count );
-        if (p_count->count == LETTER_COUNT_TARGET) {
-            logit( "Letter '%c' has exactly %d occurances\n", p_count->letter, LETTER_COUNT_TARGET );
-        }
-        p_head = p_head->next;
-    }
-
-    return NULL;
-}
-
-
-uint32_t counter = 0;
-sem_t metrics_sem;
-
-// runs in its own thread, so do minimal work to return control to metrics reporter
-void timer_func( union sigval val )
-{
-    // decrement mutex, cond variable here?
-    counter++;
-    sem_post(&metrics_sem);
-}
-
-void *metrics_reporter( void *data )
-{
-    thread_info_t *tinfo = data;
-    thread_init( tinfo );
-
-    struct sigevent event;
-    event.sigev_notify = SIGEV_THREAD;   // just call a function, don't signal
-    event.sigev_notify_function = timer_func;
-    event.sigev_value.sival_ptr = NULL;  // data value passed in when using SIGEV_THREAD?
-    event.sigev_notify_attributes = NULL;
-
-    //timer_t timer;
-    if (timer_create(CLOCK_MONOTONIC, &event, &tinfo->timer) ) {
-        logit( "Timer create failed\n" );
-    }
-
-    struct itimerspec ts;
-    ts.it_value.tv_sec = 0;
-    ts.it_value.tv_nsec = METRICS_INTERVAL_MS * 1000000;  // expiration time in nanoseconds
-    ts.it_interval.tv_sec = 0;
-    ts.it_interval.tv_nsec = ts.it_value.tv_nsec;  // set reload value, make timer periodic
-
-    if( timer_settime(tinfo->timer, 0, &ts, NULL) ) {
-        logit( "Timer set failed!\n" );
-    }
-
-    struct rusage usage;
-
-    sem_init(&metrics_sem, 0, 0);
-
-    logit( "Metrics reporter initialized\n" );
-    while(1) {
-        sem_wait(&metrics_sem);
-        getrusage( RUSAGE_SELF, &usage );
-        logit( "CPU stats: User %lu.%06lu, Kernel %lu.%06lu, CS(vol) %u, CS(inv) %u\n",
-               usage.ru_utime.tv_sec, usage.ru_utime.tv_usec,
-               usage.ru_stime.tv_sec, usage.ru_stime.tv_usec,
-               usage.ru_nvcsw, usage.ru_nivcsw);
-
-    }
-    return NULL;
-}
-
-
+// Function: signal_handler
+//
+// This is the common signal handler used to respond to SIGUSR1 and SIGUSR2 for
+// graceful shutdown.
+//
 void signal_handler(int sig)
 {
     thread_info_t *tinfo = pthread_getspecific(tinfo_key);
+
     if( tinfo->app_tid != THREAD_MAIN ) {
+        // Worker thread caught the signal, just cleanup and exit that thread.
         logit( "Caught signal %d, exiting gracefully...\n", sig );
         // NOTE: Thread exit will cause thread_cleanup() to be called as a
         // destructor when each thread's TLS is removed
         pthread_exit(0);
     } else {
+        // Main thread caught the signal, consider this an indication that
+        // the entire process should shutodwn. Clean up workers accordingly.
         logit( "Caught signal %d, cancelling child threads...\n", sig );
         for(thread_name_t idx = 1; idx<THREAD_MAX; idx++) {
             pthread_cancel(thread_info[idx].pthread_tid);

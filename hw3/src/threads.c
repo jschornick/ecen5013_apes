@@ -6,7 +6,7 @@
 
   Author      : Jeff Schornick (jesc5667@colorado.edu)
   Version     : Version and history information is available at the GitHub repository:
-  https://github.com/jschornick/ecen5013_apes/hw3
+                https://github.com/jschornick/ecen5013_apes/hw3
 */
 
 #include <pthread.h>
@@ -17,11 +17,34 @@
 #include "logging.h"
 #include "threads.h"
 
+
 pthread_key_t tinfo_key;
 thread_info_t thread_info[THREAD_MAX];
 const char *thread_name[] = { "Main", "Letters", "Metrics" };
 
-// finishes tinfo population and opens log
+
+thread_info_t * init_threading( char *log_filename )
+{
+    thread_info_t *tinfo;
+    tinfo = &thread_info[THREAD_MAIN];
+
+    // This TLS key allows each thread to have a pointer to its thread_info structure.
+    pthread_key_create(&tinfo_key, thread_cleanup);
+
+    tinfo->log_filename = log_filename;
+
+    for(thread_name_t name = 0; name<THREAD_MAX; name++) {
+        thread_info[name].app_tid = name;
+        thread_info[name].log_filename = thread_info[THREAD_MAIN].log_filename;
+    }
+
+    // Even though this is the main thread, initiailze our info just like any other thread
+    thread_init(tinfo);
+
+    return tinfo;
+}
+
+
 void thread_init( thread_info_t *tinfo)
 {
     tinfo->linux_tid = syscall(SYS_gettid);
@@ -41,12 +64,14 @@ void thread_init( thread_info_t *tinfo)
     logit( "Start time: %u.%09u\n", t.tv_sec, t.tv_nsec );
 }
 
-// NOTE: Can't use logit() in cleanup!
+
 void thread_cleanup(void *data)
 {
     thread_info_t *tinfo = data;
     struct timespec t;
     clock_gettime(CLOCK_MONOTONIC, &t );
+
+    // NOTE: Can't use logit() in cleanup since TLS keys are invalid!
 
     if (tinfo->timer) {
         log_with_tinfo( tinfo, "Deleting POSIX timer\n" );
