@@ -1,0 +1,103 @@
+0000761.242357714 [Main] Opened logfile (fd = 3), start time: 761.242263009
+0000761.242407370 [Main] App TID: 0, Linux TID: 18365, pthread ID: 139997727561536
+0000761.242510521 [Letters] Opened logfile (fd = 4), start time: 761.242480827
+0000761.242530828 [Letters] App TID: 1, Linux TID: 18366, pthread ID: 139997717284608
+0000761.242538193 [Letters] Successfully opened file: 'Valentinesday.txt'
+0000761.242546227 [Metrics] Opened logfile (fd = 6), start time: 761.242527972
+0000761.242558346 [Metrics] App TID: 2, Linux TID: 18367, pthread ID: 139997708891904
+0000761.242604144 [Metrics] Metrics reporter initialized
+0000761.242952657 [Letters] Letter counting complete
+0000761.242970583 [Letters] Letter 'Q' has exactly 3 occurances
+0000761.242973480 [Letters] Letter 'X' has exactly 3 occurances
+0000761.242975300 [Letters] Letter 'Z' has exactly 3 occurances
+0000761.242978086 [Letters] Closing logfile (fd = 4), exit time: 761.242977869
+0000761.342724193 [Metrics] CPU stats: User 0.001045, Kernel 0.001045, CS(vol) 6, CS(inv) 0
+0000761.442715512 [Metrics] CPU stats: User 0.001096, Kernel 0.001096, CS(vol) 8, CS(inv) 0
+0000761.542912068 [Metrics] CPU stats: User 0.001186, Kernel 0.001186, CS(vol) 10, CS(inv) 0
+0000761.642869380 [Metrics] CPU stats: User 0.001289, Kernel 0.001289, CS(vol) 12, CS(inv) 0
+0000761.742860735 [Metrics] CPU stats: User 0.001410, Kernel 0.001410, CS(vol) 14, CS(inv) 0
+0000761.842758094 [Metrics] CPU stats: User 0.001488, Kernel 0.001488, CS(vol) 16, CS(inv) 0
+0000761.942900180 [Metrics] CPU stats: User 0.001576, Kernel 0.001576, CS(vol) 18, CS(inv) 0
+0000762.042822794 [Metrics] CPU stats: User 0.001708, Kernel 0.001708, CS(vol) 20, CS(inv) 0
+0000762.142782026 [Metrics] CPU stats: User 0.001786, Kernel 0.001786, CS(vol) 22, CS(inv) 0
+0000762.242686654 [Metrics] CPU stats: User 0.001905, Kernel 0.001905, CS(vol) 24, CS(inv) 0
+0000762.342897258 [Metrics] CPU stats: User 0.001996, Kernel 0.001996, CS(vol) 26, CS(inv) 0
+0000762.442678360 [Metrics] CPU stats: User 0.002057, Kernel 0.002057, CS(vol) 28, CS(inv) 0
+0000762.542851176 [Metrics] CPU stats: User 0.002168, Kernel 0.002168, CS(vol) 30, CS(inv) 0
+0000762.642762731 [Metrics] CPU stats: User 0.002264, Kernel 0.002264, CS(vol) 32, CS(inv) 0
+0000762.742791482 [Metrics] CPU stats: User 0.002338, Kernel 0.002338, CS(vol) 34, CS(inv) 0
+0000762.842834833 [Metrics] CPU stats: User 0.002393, Kernel 0.002393, CS(vol) 36, CS(inv) 0
+0000762.942712629 [Metrics] CPU stats: User 0.002469, Kernel 0.002469, CS(vol) 38, CS(inv) 0
+0000763.042831182 [Metrics] CPU stats: User 0.002589, Kernel 0.002589, CS(vol) 40, CS(inv) 0
+0000763.142738624 [Metrics] CPU stats: User 0.002649, Kernel 0.002649, CS(vol) 42, CS(inv) 0
+0000763.242782147 [Metrics] CPU stats: User 0.002752, Kernel 0.002752, CS(vol) 44, CS(inv) 0
+0000763.342861198 [Metrics] CPU stats: User 0.002855, Kernel 0.002855, CS(vol) 46, CS(inv) 0
+0000763.442734276 [Metrics] CPU stats: User 0.002922, Kernel 0.002922, CS(vol) 48, CS(inv) 0
+0000763.542641990 [Metrics] CPU stats: User 0.002944, Kernel 0.002944, CS(vol) 50, CS(inv) 0
+0000763.642777481 [Metrics] CPU stats: User 0.003038, Kernel 0.003038, CS(vol) 52, CS(inv) 0
+0000763.742784379 [Metrics] CPU stats: User 0.003131, Kernel 0.003131, CS(vol) 54, CS(inv) 0
+0000763.842709085 [Metrics] CPU stats: User 0.003174, Kernel 0.003174, CS(vol) 56, CS(inv) 0
+0000763.942803051 [Metrics] CPU stats: User 0.003234, Kernel 0.003234, CS(vol) 58, CS(inv) 0
+0000764.042734595 [Metrics] CPU stats: User 0.003313, Kernel 0.003313, CS(vol) 60, CS(inv) 0
+0000764.142685452 [Metrics] CPU stats: User 0.003381, Kernel 0.003381, CS(vol) 62, CS(inv) 0
+0000764.242691852 [Metrics] CPU stats: User 0.003444, Kernel 0.003444, CS(vol) 64, CS(inv) 0
+0000764.342779144 [Metrics] CPU stats: User 0.003481, Kernel 0.003481, CS(vol) 66, CS(inv) 0
+0000764.442748326 [Metrics] CPU stats: User 0.003584, Kernel 0.003584, CS(vol) 68, CS(inv) 0
+0000764.542760909 [Metrics] CPU stats: User 0.003643, Kernel 0.003643, CS(vol) 70, CS(inv) 0
+0000764.642679542 [Metrics] CPU stats: User 0.003715, Kernel 0.003715, CS(vol) 72, CS(inv) 0
+0000764.742723464 [Metrics] CPU stats: User 0.003762, Kernel 0.003762, CS(vol) 74, CS(inv) 0
+0000764.842846702 [Metrics] CPU stats: User 0.003905, Kernel 0.003905, CS(vol) 76, CS(inv) 0
+0000764.942887289 [Metrics] CPU stats: User 0.003994, Kernel 0.003994, CS(vol) 78, CS(inv) 0
+0000765.042878957 [Metrics] CPU stats: User 0.004082, Kernel 0.004082, CS(vol) 80, CS(inv) 0
+0000765.142740060 [Metrics] CPU stats: User 0.004164, Kernel 0.004164, CS(vol) 82, CS(inv) 0
+0000765.242719900 [Metrics] CPU stats: User 0.004198, Kernel 0.004198, CS(vol) 84, CS(inv) 0
+0000765.342707066 [Metrics] CPU stats: User 0.004244, Kernel 0.004244, CS(vol) 86, CS(inv) 0
+0000765.442892346 [Metrics] CPU stats: User 0.004325, Kernel 0.004325, CS(vol) 88, CS(inv) 0
+0000765.542868041 [Metrics] CPU stats: User 0.004416, Kernel 0.004416, CS(vol) 90, CS(inv) 0
+0000765.642889349 [Metrics] CPU stats: User 0.004485, Kernel 0.004485, CS(vol) 92, CS(inv) 0
+0000765.742911675 [Metrics] CPU stats: User 0.004588, Kernel 0.004588, CS(vol) 94, CS(inv) 0
+0000765.842898467 [Metrics] CPU stats: User 0.004698, Kernel 0.004698, CS(vol) 96, CS(inv) 0
+0000765.942693772 [Metrics] CPU stats: User 0.004784, Kernel 0.004784, CS(vol) 98, CS(inv) 0
+0000766.042859616 [Metrics] CPU stats: User 0.004848, Kernel 0.004848, CS(vol) 100, CS(inv) 0
+0000766.142953809 [Metrics] CPU stats: User 0.005001, Kernel 0.005001, CS(vol) 102, CS(inv) 0
+0000766.242879870 [Metrics] CPU stats: User 0.005001, Kernel 0.005188, CS(vol) 104, CS(inv) 0
+0000766.342694833 [Metrics] CPU stats: User 0.005001, Kernel 0.005284, CS(vol) 106, CS(inv) 0
+0000766.442677806 [Metrics] CPU stats: User 0.005001, Kernel 0.005338, CS(vol) 108, CS(inv) 0
+0000766.542920266 [Metrics] CPU stats: User 0.005001, Kernel 0.005520, CS(vol) 110, CS(inv) 0
+0000766.642832718 [Metrics] CPU stats: User 0.005001, Kernel 0.005814, CS(vol) 112, CS(inv) 0
+0000766.742685329 [Metrics] CPU stats: User 0.005001, Kernel 0.005915, CS(vol) 114, CS(inv) 0
+0000766.842856397 [Metrics] CPU stats: User 0.005001, Kernel 0.006064, CS(vol) 116, CS(inv) 0
+0000766.942936966 [Metrics] CPU stats: User 0.005001, Kernel 0.006311, CS(vol) 118, CS(inv) 0
+0000767.042943129 [Metrics] CPU stats: User 0.005001, Kernel 0.006519, CS(vol) 120, CS(inv) 0
+0000767.142779415 [Metrics] CPU stats: User 0.005001, Kernel 0.006699, CS(vol) 122, CS(inv) 0
+0000767.242871404 [Metrics] CPU stats: User 0.005001, Kernel 0.006860, CS(vol) 124, CS(inv) 0
+0000767.342873617 [Metrics] CPU stats: User 0.005001, Kernel 0.007093, CS(vol) 126, CS(inv) 0
+0000767.442749607 [Metrics] CPU stats: User 0.005001, Kernel 0.007264, CS(vol) 128, CS(inv) 0
+0000767.542727472 [Metrics] CPU stats: User 0.005001, Kernel 0.007426, CS(vol) 130, CS(inv) 0
+0000767.642812055 [Metrics] CPU stats: User 0.005001, Kernel 0.007551, CS(vol) 132, CS(inv) 0
+0000767.742834497 [Metrics] CPU stats: User 0.005001, Kernel 0.007699, CS(vol) 134, CS(inv) 0
+0000767.842843069 [Metrics] CPU stats: User 0.005001, Kernel 0.007878, CS(vol) 136, CS(inv) 0
+0000767.942736081 [Metrics] CPU stats: User 0.005001, Kernel 0.007969, CS(vol) 138, CS(inv) 0
+0000768.042800565 [Metrics] CPU stats: User 0.005001, Kernel 0.008179, CS(vol) 140, CS(inv) 0
+0000768.142933327 [Metrics] CPU stats: User 0.005001, Kernel 0.008363, CS(vol) 142, CS(inv) 0
+0000768.242824695 [Metrics] CPU stats: User 0.005001, Kernel 0.008617, CS(vol) 144, CS(inv) 0
+0000768.342750483 [Metrics] CPU stats: User 0.005001, Kernel 0.008809, CS(vol) 146, CS(inv) 0
+0000768.442911709 [Metrics] CPU stats: User 0.005001, Kernel 0.008993, CS(vol) 148, CS(inv) 0
+0000768.542950921 [Metrics] CPU stats: User 0.005001, Kernel 0.009235, CS(vol) 150, CS(inv) 0
+0000768.642837117 [Metrics] CPU stats: User 0.005001, Kernel 0.009470, CS(vol) 152, CS(inv) 0
+0000768.742776012 [Metrics] CPU stats: User 0.005001, Kernel 0.009603, CS(vol) 154, CS(inv) 0
+0000768.842884650 [Metrics] CPU stats: User 0.005001, Kernel 0.009891, CS(vol) 156, CS(inv) 0
+0000768.942916346 [Metrics] CPU stats: User 0.005001, Kernel 0.010166, CS(vol) 158, CS(inv) 0
+0000769.042853015 [Metrics] CPU stats: User 0.005001, Kernel 0.010309, CS(vol) 160, CS(inv) 0
+0000769.142813760 [Metrics] CPU stats: User 0.005001, Kernel 0.010623, CS(vol) 162, CS(inv) 0
+0000769.242661032 [Metrics] CPU stats: User 0.005001, Kernel 0.010694, CS(vol) 164, CS(inv) 0
+0000769.342741681 [Metrics] CPU stats: User 0.005001, Kernel 0.010835, CS(vol) 166, CS(inv) 0
+0000769.442683409 [Metrics] CPU stats: User 0.005001, Kernel 0.010900, CS(vol) 168, CS(inv) 0
+0000769.542836363 [Metrics] CPU stats: User 0.005001, Kernel 0.011117, CS(vol) 170, CS(inv) 0
+0000769.642660146 [Metrics] CPU stats: User 0.005001, Kernel 0.011208, CS(vol) 172, CS(inv) 0
+0000769.742754062 [Metrics] CPU stats: User 0.005001, Kernel 0.011343, CS(vol) 174, CS(inv) 0
+0000769.790605699 [Metrics] Caught signal 10, exiting gracefully...
+0000769.790884595 [Metrics] Deleting POSIX timer
+0000769.790904439 [Metrics] Closing logfile (fd = 6), exit time: 769.790884435
+0000769.790976262 [Main] All worker threads joined
+0000769.790993727 [Main] Closing logfile (fd = 3), exit time: 769.790993538
