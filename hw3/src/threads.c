@@ -81,4 +81,5 @@ void thread_cleanup(void *data)
     // our thread local storage is no longer valid, but the allocation is still valid
     log_with_tinfo( tinfo, "Closing logfile (fd = %d), exit time: %ld.%09ld\n",
            fileno(tinfo->p_logfile), t.tv_sec, t.tv_nsec );
+    fclose(tinfo->p_logfile);
 }

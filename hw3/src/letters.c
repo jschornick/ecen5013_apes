@@ -56,7 +56,6 @@ void *letter_counter( void *data )
     logit( "Letter counting complete\n" );
     while( p_head != NULL) {
         p_count = LIST_CONTAINER(p_head, count_t, node);
-        //logit( "Total for %c : %u\n", p_count->letter, p_count->count );
         if (p_count->count == LETTER_COUNT_TARGET) {
             logit( "Letter '%c' has exactly %d occurances\n", p_count->letter, LETTER_COUNT_TARGET );
         }
