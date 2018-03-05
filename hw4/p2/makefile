@@ -24,7 +24,7 @@ SRC_DIR = src
 INC_DIR = inc
 BUILD_DIR = BUILD
 
-NAMES = pipes sockets shmem queues
+NAMES = pipes sockets shmem mqueues
 
 EXES = $(addsuffix .elf, $(addprefix hw4p2_, $(NAMES)))
 COMMON_SRCS = messages.c
