@@ -2,7 +2,7 @@
   File        : messages.c
   Description : APES Homework 4, Problem 2
 
-  Message handling
+  Message handling function implementations
 
   Author      : Jeff Schornick (jesc5667@colorado.edu)
   Version     : Version and history information is available at the GitHub repository:
@@ -52,10 +52,12 @@ char * msg_to_str(char *buffer, msg_t *msg)
     return buffer;
 }
 
+
 void print_header(msg_t *msg)
 {
     printf( "Header: type(%u), data_len(%lu)\n", msg->header.type, msg->header.data_len);
 }
+
 
 size_t msg_to_msgbuf(void *buf, msg_t *msg)
 {
@@ -63,6 +65,7 @@ size_t msg_to_msgbuf(void *buf, msg_t *msg)
     memcpy( ((uint8_t*)buf) + sizeof(msg_header_t), msg->data, msg->header.data_len );
     return sizeof(msg_header_t) +  msg->header.data_len;
 }
+
 
 void msgbuf_to_msg(msg_t *msg, void *buf)
 {
