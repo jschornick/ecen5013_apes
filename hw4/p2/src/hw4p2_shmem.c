@@ -8,16 +8,16 @@
 
   Author      : Jeff Schornick (jesc5667@colorado.edu)
   Version     : Version and history information is available at the GitHub repository:
-                https://github.com/jschornick/ecen5013_apes/hw3
+                https://github.com/jschornick/ecen5013_apes/hw4
 */
 
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <fcntl.h>  // O_* defines
-#include <semaphore.h>  // O_* defines
-#include <string.h>  // O_* defines
-#include <errno.h>  // O_* defines
+#include <semaphore.h>
+#include <string.h>
+#include <errno.h>
 
 #include "messages.h"
 
@@ -27,6 +27,8 @@
 
 #define SEM_TO_CHILD "/sem_to_child"
 #define SEM_TO_PARENT "/sem_to_parent"
+
+const char test_string[] =  "Shared memory is cool!";
 
 void parent(void);
 void child(void);
@@ -45,7 +47,7 @@ typedef struct shm_msg {
 int main( int argc, char *argv[] )
 {
 
-    printf("Shared Memory!\n");
+    printf("IPC with Shared Memory!\n");
 
     if( fork() ) {
         parent();
@@ -101,19 +103,28 @@ void parent(void)
     printf( "Parent mapped writeable SHM @%p\n", write_shm );
 
 
-    shm_msg_t *msg = (shm_msg_t *) write_shm;
+    ///
 
-    const char str[] = "From parent";
-    strcpy( (char* ) &msg->data, str );
-    msg->len = strlen(str)+1;
+    msg_t msg;
+    char str_buf[100]; // temporary buffer for string conversion
+
+    msg.header.type = MSG_LED;
+    msg.header.data_len = sizeof(msg_led_t);
+    msg_led_t msg_data;
+    msg_data.on_off = LED_ON;
+    msg.data = &msg_data;
+
+    printf( "Parent sending: %s\n", msg_to_str(str_buf, &msg) );
+    msg_to_msgbuf(write_shm, &msg);
+
     sem_post( write_sem );
-    printf( "Parent wrote message to SHM\n" );
+
+    ///
 
     printf( "Parent waiting for message\n" );
     sem_wait( read_sem );
-    msg = (shm_msg_t *) read_shm;
-    printf( "Parent got message len: '%lu'\n", msg->len );
-    printf( "Parent got message: '%s'\n", (char *) &msg->data );
+    msgbuf_to_msg( &msg, read_shm);
+    printf( "Parent got message: %s\n", msg_to_str(str_buf, &msg) );
 
     shm_unlink( SHM_TO_PARENT );
     shm_unlink( SHM_TO_CHILD );
@@ -164,18 +175,23 @@ void child(void)
     close( shm_fd );
     printf( "Child mapped writeable SHM @%p\n", write_shm );
 
+
+    ///
+
+    msg_t msg;
+    char str_buf[100]; // temporary buffer for string conversion
+
     sem_wait( read_sem );
-    shm_msg_t *msg = (shm_msg_t *) read_shm;
-    printf( "Child got message length: '%lu'\n", msg->len );
-    printf( "Child got message: '%s'\n", (char *) &msg->data );
+    msgbuf_to_msg( &msg, read_shm);
+    printf( "Parent got message: %s\n", msg_to_str(str_buf, &msg) );
 
-    msg = (shm_msg_t *) write_shm;
+    msg.header.type = MSG_STRING;
+    msg.data = (char *) test_string;
+    msg.header.data_len = strlen(test_string) + 1;
 
-    const char str[] = "From child";
-    strcpy( (char *) &msg->data, str );
-    msg->len = strlen(str)+1;
+    printf( "Child sending: %s\n", msg_to_str(str_buf, &msg) );
+    msg_to_msgbuf(write_shm, &msg);
     sem_post( write_sem );
-    printf( "Child wrote message to SHM\n" );
 
     shm_unlink( SHM_TO_CHILD );
     shm_unlink( SHM_TO_PARENT );
