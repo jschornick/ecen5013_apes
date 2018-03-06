@@ -9,7 +9,7 @@ testfile_*
 .tmp_versions
 *.ko
 *.o
-apes.mod.c
+*.mod.c
 Module.symvers
 modules.order
 test_*.run
