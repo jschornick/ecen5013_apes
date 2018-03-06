@@ -36,7 +36,7 @@ const char test_string[] =  "Message queues are cool!";
 int main( int argc, char *argv[] )
 {
 
-    printf("Queues!\n");
+    printf("IPC with Queues!\n");
 
     if( fork() ) {
         parent();
@@ -52,7 +52,7 @@ int main( int argc, char *argv[] )
 
 void parent(void)
 {
-    printf("Parent, PID: %u\n", getpid());
+    printf("Parent has PID: %u\n", getpid());
 
     mqd_t mq_c;  // messages to child
     mqd_t mq_p;  // messages for parent
@@ -120,7 +120,7 @@ void parent(void)
 
 void child(void)
 {
-    printf("Child, PID: %u\n", getpid());
+    printf("Child has PID: %u\n", getpid());
 
     mqd_t mq_c;  // messages for child
     mqd_t mq_p;  // messages to parent
