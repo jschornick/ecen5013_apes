@@ -8,7 +8,7 @@
 
   Author      : Jeff Schornick (jesc5667@colorado.edu)
   Version     : Version and history information is available at the GitHub repository:
-                https://github.com/jschornick/ecen5013_apes/hw3
+                https://github.com/jschornick/ecen5013_apes/hw4
 */
 
 #include <stdio.h>
@@ -17,6 +17,7 @@
 #include <fcntl.h>  // O_* defines
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "messages.h"
 
@@ -25,6 +26,8 @@ void child(void);
 
 #define MAX_MSG_SIZE 100
 #define MAX_MSG_COUNT 10
+
+const char test_string[] =  "Message queues are cool!";
 
 // Function: main
 //
@@ -83,19 +86,30 @@ void parent(void)
 
     // Send/receive messages
 
-    char str[MAX_MSG_SIZE];
-    strcpy( str, "From parent" );
+    void *msg_buf = malloc(MAX_MSG_SIZE);
+    size_t msg_buf_len;
 
-    if( mq_send( mq_c, str, strlen(str)+1, 0) ) {
+    msg_t msg;
+    char str_buf[100]; // temporary buffer for string conversion
+
+    msg.header.type = MSG_LED;
+    msg.header.data_len = sizeof(msg_led_t);
+    msg_led_t msg_data;
+    msg_data.on_off = LED_ON;
+    msg.data = &msg_data;
+
+    printf( "Parent sending: %s\n", msg_to_str(str_buf, &msg) );
+    msg_buf_len = msg_to_msgbuf(msg_buf, &msg);
+
+    if( mq_send( mq_c, msg_buf, msg_buf_len, 0) ) {
         printf( "Parent failed to send: %s!\n", strerror(errno) );
-    } else {
-        printf( "Parent sent '%s'\n", str );
     }
 
-    if( mq_receive( mq_p, str, MAX_MSG_SIZE, NULL) < 0 ) {
+    if( mq_receive( mq_p, msg_buf, MAX_MSG_SIZE, NULL) < 0 ) {
         printf( "Parent failed to receive: %d\n", errno );
     } else {
-        printf( "Parent received: '%s'\n", str );
+        msgbuf_to_msg( &msg, msg_buf );
+        printf( "Parent recieved: %s\n", msg_to_str(str_buf, &msg) );
     }
 
     mq_close( mq_c );
@@ -136,20 +150,28 @@ void child(void)
     //sleep(1);
 
     /////
+    void *msg_buf = malloc(MAX_MSG_SIZE);
+    size_t msg_buf_len;
 
-    char str[MAX_MSG_SIZE];
-    strcpy( str, "From child" );
+    msg_t msg;
+    char str_buf[100]; // temporary buffer for string conversion
 
-    if( mq_send( mq_p, str, strlen(str)+1, 0) ) {
+    msg.header.type = MSG_STRING;
+    msg.data = (char *) test_string;
+    msg.header.data_len = strlen(test_string) + 1;
+
+    printf( "Child sending: %s\n", msg_to_str(str_buf, &msg) );
+    msg_buf_len = msg_to_msgbuf(msg_buf, &msg);
+
+    if( mq_send( mq_p, msg_buf, msg_buf_len, 0) ) {
         printf( "Child failed to send: %d!\n", errno );
-    } else {
-        printf( "Child sent '%s'\n", str );
     }
 
-    if( mq_receive( mq_c, str, MAX_MSG_SIZE, NULL) < 0 ) {
+    if( mq_receive( mq_c, msg_buf, MAX_MSG_SIZE, NULL) < 0 ) {
         printf( "Child failed to receive: %d\n", errno );
     } else {
-        printf( "Child received: '%s'\n", str );
+        msgbuf_to_msg( &msg, msg_buf );
+        printf( "Child received: '%s'\n", msg_to_str(str_buf, &msg) );
     }
 
     mq_close( mq_p );

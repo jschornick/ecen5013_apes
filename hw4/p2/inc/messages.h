@@ -6,7 +6,7 @@
 
   Author      : Jeff Schornick (jesc5667@colorado.edu)
   Version     : Version and history information is available at the GitHub repository:
-  https://github.com/jschornick/ecen5013_apes/hw3
+                https://github.com/jschornick/ecen5013_apes/hw4
 */
 
 
@@ -41,5 +41,7 @@ typedef struct msg_data_led {
 
 char * msg_to_str(char *buffer, msg_t *msg);
 void print_header(msg_t *msg);
+size_t msg_to_msgbuf(void *buf, msg_t *msg);
+void msgbuf_to_msg(msg_t *msg, void *buf);
 
 #endif /* _MESSAGES_H */

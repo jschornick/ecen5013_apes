@@ -8,7 +8,7 @@
 
   Author      : Jeff Schornick (jesc5667@colorado.edu)
   Version     : Version and history information is available at the GitHub repository:
-                https://github.com/jschornick/ecen5013_apes/hw3
+                https://github.com/jschornick/ecen5013_apes/hw4
 */
 
 #include <stdio.h>
@@ -27,7 +27,7 @@ void child(void);
 int pipe_to_parent[2];
 int pipe_to_child[2];
 
-const char child_response[] =  "Got your message!";
+const char test_string[] =  "Pipes are cool!";
 
 // Function: main
 //
@@ -36,10 +36,21 @@ const char child_response[] =  "Got your message!";
 int main( int argc, char *argv[] )
 {
 
-    pipe(pipe_to_parent);
-    pipe(pipe_to_child);
-
     printf("IPC with Pipes!\n");
+
+    if( pipe(pipe_to_parent) ) {
+        printf("Could not create pipe to parent!\n");
+        return -1;
+    } else {
+        printf("Created pipe to parent\n");
+    }
+
+    if( pipe(pipe_to_child) ) {
+        printf("Could not create pipe to child!\n");
+        return -1;
+    } else {
+        printf("Created pipe to child\n");
+    }
 
     if( fork() ) {
         parent();
@@ -75,11 +86,11 @@ void parent(void)
 
 
     // Read response from child
-    read(read_fd, &msg.header, sizeof(msg_header_t));
-    msg.data = malloc(msg.header.data_len);
-    read(read_fd, msg.data, msg.header.data_len);
+    read( read_fd, &msg.header, sizeof(msg_header_t) );
+    msg.data = malloc( msg.header.data_len );
+    read( read_fd, msg.data, msg.header.data_len );
     printf( "Parent recieved: %s\n", msg_to_str(str_buf, &msg) );
-    free(msg.data);
+    free( msg.data );
 }
 
 void child(void)
@@ -95,20 +106,19 @@ void child(void)
     char str_buf[100]; // temporary buffer for string conversion
 
     // Receive message from parent
-    read(read_fd, &msg.header, sizeof(msg_header_t));
-    msg.data = malloc(msg.header.data_len);
-    read(read_fd, msg.data, msg.header.data_len);
+    read( read_fd, &msg.header, sizeof(msg_header_t) );
+    msg.data = malloc( msg.header.data_len );
+    read( read_fd, msg.data, msg.header.data_len );
 
     printf( "Child recieved: %s\n", msg_to_str(str_buf, &msg) );
     free(msg.data);
 
     // Send a response back to parent
     msg.header.type = MSG_STRING;
-    msg.data = (char *) child_response;
-    msg.header.data_len = strlen(child_response) + 1;
+    msg.data = (char *) test_string;
+    msg.header.data_len = strlen(test_string) + 1;
 
     printf( "Child sending: %s\n", msg_to_str(str_buf, &msg) );
     write( write_fd, &msg.header, sizeof(msg_header_t) );
     write( write_fd, msg.data, msg.header.data_len );
-
 }
